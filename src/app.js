@@ -13,5 +13,12 @@ app.use(express.urlencoded({extended: true, limit: "16kb"}))//data from url
 app.use(express.static("public"))//some images pdfs etc i want to store in my server only is put in the folder name "public"
 app.use(cookieParser())//use the cookies of the user using CRUD operation
 
+//routes import
+import userRouter from "./routes/user.route.js"
+
+//routes declaration 
+app.use("/api/v1/users", userRouter)//in this line the 'userRouter' has been imported from the routes folder and this is used to redirect the code to the file 'user.route.js'
+
+/* this will lead to this url "http://localhost:8000/api/v1/users/:slug" */
 
 export { app };
