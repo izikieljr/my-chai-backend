@@ -22,3 +22,7 @@ app.use("/api/v1/users", userRouter)//in this line the 'userRouter' has been imp
 /* this will lead to this url "http://localhost:8000/api/v1/users/:slug" */
 
 export { app };
+
+//1. take the data from a from
+//2. chcek wetjher the creddentials are correct
+//3. log in if true else show error msg
