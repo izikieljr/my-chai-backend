@@ -1,3 +1,4 @@
+// import { upload } from "../middlewares/multer.middleware.js";
 import { asyncHandler } from "../utils/asyncHanler.js";
 import { ApiError } from "../utils/APIerror.js";
 import { user } from "../models/users.model.js";
@@ -19,9 +20,9 @@ const registerUser = asyncHandler(async (req, res) => {
 
 
 
-   //return res.status(200).json({message: "ok"})
+//   return res.status(200).json({message: "ok"})
    const { fullname, email, username, password } = req.body// destructuring to get info of the user in different variables
-   console.log("email: ", email)
+   // console.log("email: ", email)
 
 
 
@@ -60,7 +61,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
    //check if user already exists
 
-   const existedUser = user.findOne({ email, username })
+  const existedUser = await user.findOne({ email, username })
 
    /*  
   hitesh sir's code 
@@ -69,13 +70,18 @@ const registerUser = asyncHandler(async (req, res) => {
      })
    */
 
-
+     if (existedUser) {
+      throw new ApiError(409, "User with email or username already exists")
+  }
    
+  console.log(req.files)
    //the file upload thing idk much about this one i'll learn multer and then these will be cleared
+  
    const avatarLocalPath = req.files?.avatar[0]?.path ;
    const coverImageLocalPath = req.files?.coverImage[0]?.path ;   //multer gives more properties to the req
+   
    if(!avatarLocalPath){
-      throw new ApiError(400, "Avatar file is required")
+      throw new ApiError(401, "Avatar file is required")
    }
 
 
@@ -85,8 +91,9 @@ const registerUser = asyncHandler(async (req, res) => {
    const avatar = await uploadOnCloudinary(avatarLocalPath);
    const coverImage = await uploadOnCloudinary(coverImageLocalPath);
   
+
    if(!avatar) {
-      throw new ApiError(400, "Avatar is required")
+      throw new ApiError(400, "Avatar failed to be uploaded")
    }
 
 
@@ -101,7 +108,7 @@ const registerUser = asyncHandler(async (req, res) => {
       username
    })
 
-   //check if user is created or something wen5t wrong
+  // check if user is created or something wen5t wrong
 
 const createdUser = await user.findById(User._id).select(
       "-password -refreshToken"//removing pass and refresh token
